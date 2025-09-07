@@ -42,6 +42,14 @@ class KidLearnApp {
         icon: '🔤',
         className: 'LetterLearningGame',
         available: true
+      },
+      'shape-matching': {
+        id: 'shape-matching',
+        title: 'Shape Fun Adventure!',
+        description: 'Learn basic shapes through fun recognition!',
+        icon: '🔴',
+        className: 'ShapeMatchingGame',
+        available: true
       }
     };
     

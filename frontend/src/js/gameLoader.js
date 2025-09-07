@@ -21,7 +21,13 @@ class GameLoader {
         title: 'Alphabet Adventure!', 
         className: 'LetterLearningGame',
         available: true
-      }
+      },
+      'shape-matching': {
+        id: 'shape-matching',
+        title: 'Shape Fun Adventure!',
+        className: 'ShapeMatchingGame',
+        available: true
+    }
     };
     
     this.currentGame = null;
