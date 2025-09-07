@@ -1,5 +1,5 @@
 /**
- * Simplified Server for Development
+ * Simplified Server for Development (Updated)
  * This version runs without database dependencies for quick testing
  */
 
@@ -32,8 +32,11 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Serve static files
+// Serve static files from frontend/public
 app.use(express.static(path.join(__dirname, 'frontend/public')));
+
+// Serve frontend source files
+app.use('/src', express.static(path.join(__dirname, 'frontend/src')));
 
 // Simple in-memory storage for development
 let users = [];
@@ -112,7 +115,7 @@ app.get('/api/progress', (req, res) => {
   };
   
   res.json({ 
-    progress: progress.slice(-20), // Last 20 sessions
+    progress: progress.slice(-20),
     summary 
   });
 });
@@ -170,8 +173,18 @@ io.on('connection', (socket) => {
   });
 });
 
-// Catch-all handler for SPA routing
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
+// Catch-all handler for SPA routing - must be last
 app.get('*', (req, res) => {
+  console.log('Serving index.html for:', req.path);
   res.sendFile(path.join(__dirname, 'frontend/public/index.html'));
 });
 
@@ -198,7 +211,10 @@ server.listen(PORT, () => {
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log('🚧 Running in simplified mode (no database required)');
   
-  // Show available games
+  console.log('\n📁 Serving files from:');
+  console.log(`  Frontend: ${path.join(__dirname, 'frontend/public')}`);
+  console.log(`  Source: ${path.join(__dirname, 'frontend/src')}`);
+  
   console.log('\n🎯 Available Games:');
   console.log('  • Color Matching Fun! (🎨)');
   console.log('  • Number Fun Adventure! (🔢)');

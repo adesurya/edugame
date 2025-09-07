@@ -5,28 +5,416 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KidLearn Games - Educational Games for Children</title>
     
-    <!-- Meta tags for SEO and mobile -->
     <meta name="description" content="Fun and educational games for children aged 3-6. Learn colors, numbers, letters and more!">
     <meta name="keywords" content="educational games, kids learning, children games, early childhood education">
     <meta name="author" content="KidLearn Games">
     
-    <!-- Favicon -->
-    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
     
-    <!-- Preload critical resources -->
-    <link rel="preload" href="/assets/styles/main.css" as="style">
-    <link rel="preload" href="/assets/sounds/click.mp3" as="audio">
-    
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="/assets/styles/main.css">
-    <link rel="stylesheet" href="/assets/styles/games.css">
-    <link rel="stylesheet" href="/assets/styles/responsive.css">
-    
-    <!-- Google Fonts for child-friendly typography -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
     
-    <!-- Socket.io for real-time features -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --accent-color: #FF9800;
+            --success-color: #8BC34A;
+            --warning-color: #FFC107;
+            --error-color: #F44336;
+            --background-color: #F8F9FA;
+            --surface-color: #FFFFFF;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --font-family-primary: 'Comic Neue', cursive;
+            --font-family-heading: 'Fredoka One', cursive;
+            --transition-normal: 0.3s ease;
+            --border-radius: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-xxl: 3rem;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-family-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .loading-logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        .loading-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        
+        .loading-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+        
+        /* App Container */
+        .app-container {
+            min-height: 100vh;
+            background: var(--background-color);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        /* Header */
+        .app-header {
+            background: var(--surface-color);
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) var(--spacing-xl);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .app-logo {
+            font-size: 2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius);
+        }
+        
+        .app-title {
+            font-family: var(--font-family-heading);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .main-nav {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: 8px;
+            font-family: var(--font-family-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            color: var(--text-secondary);
+        }
+        
+        .nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .user-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            border-radius: var(--border-radius);
+            background: var(--background-color);
+        }
+        
+        .avatar {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .username {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: var(--spacing-xl);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Game Cards */
+        .games-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .games-header h2 {
+            font-family: var(--font-family-heading);
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .age-filter {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .filter-btn {
+            background: var(--surface-color);
+            border: 2px solid #E0E0E0;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius);
+            font-family: var(--font-family-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .game-card {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .game-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .game-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            color: white;
+        }
+        
+        .game-title {
+            font-family: var(--font-family-heading);
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+        }
+        
+        .game-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.5;
+        }
+        
+        .game-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .age-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .difficulty-stars {
+            color: var(--warning-color);
+            font-size: 0.875rem;
+        }
+        
+        .estimated-time {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+        
+        .btn-play-game {
+            background: linear-gradient(45deg, var(--primary-color), var(--success-color));
+            color: white;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-xl);
+            border-radius: var(--border-radius);
+            font-family: var(--font-family-primary);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin: 0 auto;
+        }
+        
+        .btn-play-game:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Game Container */
+        .game-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            font-family: var(--font-family-primary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                padding: var(--spacing-md);
+            }
+            
+            .main-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-btn {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                font-size: 0.875rem;
+            }
+            
+            .main-content {
+                padding: var(--spacing-md);
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -41,7 +429,7 @@
     </div>
 
     <!-- Main App Container -->
-    <div id="app" class="app-container" style="display: none;">
+    <div id="app" class="app-container">
         
         <!-- Navigation Header -->
         <header class="app-header">
@@ -52,7 +440,7 @@
                 </div>
                 
                 <nav class="main-nav">
-                    <button class="nav-btn" data-route="home">🏠 Home</button>
+                    <button class="nav-btn active" data-route="home">🏠 Home</button>
                     <button class="nav-btn" data-route="games">🎮 Games</button>
                     <button class="nav-btn" data-route="progress">📊 Progress</button>
                     <button class="nav-btn" data-route="settings">⚙️ Settings</button>
@@ -73,40 +461,40 @@
             <!-- Home Screen -->
             <section id="home-screen" class="screen active">
                 <div class="welcome-section">
-                    <h2 class="welcome-title">Welcome Back!</h2>
-                    <p class="welcome-subtitle">Ready to learn and have fun?</p>
+                    <h2 style="font-family: var(--font-family-heading); font-size: 2.5rem; text-align: center; margin-bottom: 1rem;">Welcome Back!</h2>
+                    <p style="text-align: center; font-size: 1.25rem; color: var(--text-secondary); margin-bottom: 2rem;">Ready to learn and have fun?</p>
                     
-                    <div class="quick-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">🏆</div>
-                            <div class="stat-value" id="total-score">0</div>
-                            <div class="stat-label">Total Score</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+                        <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); text-align: center;">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🏆</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.25rem;" id="total-score">0</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); font-weight: 600;">Total Score</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">🎯</div>
-                            <div class="stat-value" id="games-completed">0</div>
-                            <div class="stat-label">Games Completed</div>
+                        <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); text-align: center;">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">🎯</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.25rem;" id="games-completed">0</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); font-weight: 600;">Games Completed</div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">⭐</div>
-                            <div class="stat-value" id="achievements-earned">0</div>
-                            <div class="stat-label">Achievements</div>
+                        <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); text-align: center;">
+                            <div style="font-size: 1.5rem; margin-bottom: 0.5rem;">⭐</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 0.25rem;" id="achievements-earned">0</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); font-weight: 600;">Achievements</div>
                         </div>
                     </div>
                     
-                    <div class="featured-game">
-                        <h3>Featured Game</h3>
-                        <div class="game-preview" id="featured-game-card">
-                            <div class="game-icon">🎨</div>
-                            <div class="game-info">
-                                <h4>Color Matching Fun!</h4>
-                                <p>Learn colors by matching them together!</p>
-                                <div class="game-meta">
-                                    <span class="age-group">Ages 3-4</span>
-                                    <span class="difficulty">⭐ Easy</span>
+                    <div style="background: var(--surface-color); padding: 2rem; border-radius: var(--border-radius); box-shadow: var(--shadow-md);">
+                        <h3 style="font-family: var(--font-family-heading); font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">Featured Game</h3>
+                        <div style="display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: var(--border-radius); color: white;" id="featured-game-card">
+                            <div style="font-size: 3rem; background: rgba(255,255,255,0.2); padding: 1rem; border-radius: var(--border-radius);">🎨</div>
+                            <div style="flex: 1;">
+                                <h4 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Color Matching Fun!</h4>
+                                <p style="margin-bottom: 1rem; opacity: 0.9;">Learn colors by matching them together!</p>
+                                <div style="display: flex; gap: 1rem; font-size: 0.875rem;">
+                                    <span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600;">Ages 3-4</span>
+                                    <span style="background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 600;">⭐ Easy</span>
                                 </div>
                             </div>
-                            <button class="btn-play" data-game="color-matching">Play Now!</button>
+                            <button style="background: white; color: var(--primary-color); border: none; padding: 1rem 1.5rem; border-radius: var(--border-radius); font-family: var(--font-family-primary); font-size: 1rem; font-weight: 700; cursor: pointer;" class="btn-play" data-game="color-matching">Play Now!</button>
                         </div>
                     </div>
                 </div>
@@ -124,16 +512,9 @@
                 </div>
                 
                 <div class="games-grid" id="games-grid">
-                    <!-- Game cards will be dynamically generated -->
                     <div class="game-card" data-game="color-matching" data-age="3-4">
                         <div class="game-card-header">
                             <div class="game-icon">🎨</div>
-                            <div class="game-status">
-                                <div class="completion-badge" style="display: none;">✅</div>
-                                <div class="progress-ring">
-                                    <div class="progress-circle" data-progress="0"></div>
-                                </div>
-                            </div>
                         </div>
                         <div class="game-info">
                             <h3 class="game-title">Color Matching</h3>
@@ -152,8 +533,7 @@
                         </div>
                     </div>
                     
-                    <!-- Placeholder for future games -->
-                    <div class="game-card coming-soon">
+                    <div class="game-card" data-game="number-learning" data-age="3-5">
                         <div class="game-card-header">
                             <div class="game-icon">🔢</div>
                         </div>
@@ -161,18 +541,19 @@
                             <h3 class="game-title">Number Fun</h3>
                             <p class="game-description">Learn to count from 1 to 10!</p>
                             <div class="game-meta">
-                                <span class="age-badge">Ages 3-4</span>
+                                <span class="age-badge">Ages 3-5</span>
                                 <span class="difficulty-stars">⭐</span>
                             </div>
                         </div>
                         <div class="game-actions">
-                            <button class="btn-coming-soon" disabled>
-                                <span class="btn-text">Coming Soon</span>
+                            <button class="btn-play-game" data-game="number-learning">
+                                <span class="btn-icon">▶️</span>
+                                <span class="btn-text">Play</span>
                             </button>
                         </div>
                     </div>
                     
-                    <div class="game-card coming-soon">
+                    <div class="game-card" data-game="letter-learning" data-age="4-6">
                         <div class="game-card-header">
                             <div class="game-icon">🔤</div>
                         </div>
@@ -180,13 +561,14 @@
                             <h3 class="game-title">Letter Learning</h3>
                             <p class="game-description">Discover the alphabet!</p>
                             <div class="game-meta">
-                                <span class="age-badge">Ages 4-5</span>
+                                <span class="age-badge">Ages 4-6</span>
                                 <span class="difficulty-stars">⭐⭐</span>
                             </div>
                         </div>
                         <div class="game-actions">
-                            <button class="btn-coming-soon" disabled>
-                                <span class="btn-text">Coming Soon</span>
+                            <button class="btn-play-game" data-game="letter-learning">
+                                <span class="btn-icon">▶️</span>
+                                <span class="btn-text">Play</span>
                             </button>
                         </div>
                     </div>
@@ -195,30 +577,37 @@
 
             <!-- Progress Screen -->
             <section id="progress-screen" class="screen">
-                <div class="progress-header">
-                    <h2>Learning Progress</h2>
-                    <div class="progress-summary">
-                        <div class="summary-card">
-                            <h3>This Week</h3>
-                            <div class="weekly-stats" id="weekly-stats">
-                                <!-- Progress data will be loaded here -->
-                            </div>
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="font-family: var(--font-family-heading); font-size: 2.5rem;">Learning Progress</h2>
+                </div>
+                
+                <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); margin-bottom: 2rem;">
+                    <h3 style="font-family: var(--font-family-heading); margin-bottom: 1rem; color: var(--primary-color);">This Week</h3>
+                    <div id="weekly-stats">
+                        <div style="margin-bottom: 0.5rem;">
+                            <span style="font-weight: 600; color: var(--text-primary);">Games Played: 0</span>
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <span style="font-weight: 600; color: var(--text-primary);">Play Time: 0min</span>
+                        </div>
+                        <div>
+                            <span style="font-weight: 600; color: var(--text-primary);">Average Score: 0</span>
                         </div>
                     </div>
                 </div>
                 
-                <div class="progress-content">
-                    <div class="achievements-section">
-                        <h3>🏆 Achievements</h3>
-                        <div class="achievements-grid" id="achievements-grid">
-                            <!-- Achievement badges will be displayed here -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+                    <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+                        <h3 style="font-family: var(--font-family-heading); margin-bottom: 1rem; color: var(--primary-color);">🏆 Achievements</h3>
+                        <div id="achievements-grid">
+                            <div style="background: linear-gradient(45deg, var(--warning-color), var(--accent-color)); color: white; padding: 1rem; border-radius: var(--border-radius); text-align: center; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem;">🏆 First Steps</div>
                         </div>
                     </div>
                     
-                    <div class="games-progress">
-                        <h3>📈 Games Progress</h3>
-                        <div class="progress-list" id="progress-list">
-                            <!-- Individual game progress will be shown here -->
+                    <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+                        <h3 style="font-family: var(--font-family-heading); margin-bottom: 1rem; color: var(--primary-color);">📈 Games Progress</h3>
+                        <div id="progress-list">
+                            <!-- Progress will be loaded here -->
                         </div>
                     </div>
                 </div>
@@ -226,83 +615,155 @@
 
             <!-- Settings Screen -->
             <section id="settings-screen" class="screen">
-                <div class="settings-header">
-                    <h2>Settings</h2>
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="font-family: var(--font-family-heading); font-size: 2.5rem;">Settings</h2>
                 </div>
                 
-                <div class="settings-content">
-                    <div class="settings-group">
-                        <h3>Audio Settings</h3>
-                        <div class="setting-item">
-                            <label for="master-volume">Master Volume</label>
-                            <input type="range" id="master-volume" min="0" max="100" value="80">
-                            <span id="volume-value">80%</span>
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+                        <h3 style="font-family: var(--font-family-heading); margin-bottom: 1rem; color: var(--primary-color);">Audio Settings</h3>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #E0E0E0;">
+                            <label for="master-volume" style="font-weight: 600; color: var(--text-primary);">Master Volume</label>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="range" id="master-volume" min="0" max="100" value="80" style="width: 150px;">
+                                <span id="volume-value">80%</span>
+                            </div>
                         </div>
-                        <div class="setting-item">
-                            <label for="music-enabled">Background Music</label>
-                            <input type="checkbox" id="music-enabled" checked>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #E0E0E0;">
+                            <label for="music-enabled" style="font-weight: 600; color: var(--text-primary);">Background Music</label>
+                            <input type="checkbox" id="music-enabled" checked style="width: 20px; height: 20px;">
                         </div>
-                        <div class="setting-item">
-                            <label for="sound-effects">Sound Effects</label>
-                            <input type="checkbox" id="sound-effects" checked>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-group">
-                        <h3>Game Settings</h3>
-                        <div class="setting-item">
-                            <label for="difficulty-auto">Auto Adjust Difficulty</label>
-                            <input type="checkbox" id="difficulty-auto" checked>
-                        </div>
-                        <div class="setting-item">
-                            <label for="animations-enabled">Animations</label>
-                            <input type="checkbox" id="animations-enabled" checked>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0;">
+                            <label for="sound-effects" style="font-weight: 600; color: var(--text-primary);">Sound Effects</label>
+                            <input type="checkbox" id="sound-effects" checked style="width: 20px; height: 20px;">
                         </div>
                     </div>
                     
-                    <div class="settings-group">
-                        <h3>Parent Settings</h3>
-                        <button class="btn-parent-dashboard">Parent Dashboard</button>
-                        <button class="btn-export-progress">Export Progress</button>
+                    <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+                        <h3 style="font-family: var(--font-family-heading); margin-bottom: 1rem; color: var(--primary-color);">Game Settings</h3>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #E0E0E0;">
+                            <label for="difficulty-auto" style="font-weight: 600; color: var(--text-primary);">Auto Adjust Difficulty</label>
+                            <input type="checkbox" id="difficulty-auto" checked style="width: 20px; height: 20px;">
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0;">
+                            <label for="animations-enabled" style="font-weight: 600; color: var(--text-primary);">Animations</label>
+                            <input type="checkbox" id="animations-enabled" checked style="width: 20px; height: 20px;">
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--surface-color); padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+                        <h3 style="font-family: var(--font-family-heading); margin-bottom: 1rem; color: var(--primary-color);">Parent Settings</h3>
+                        <button class="btn-parent-dashboard" style="background: var(--secondary-color); color: white; border: none; padding: 1rem 1.5rem; border-radius: var(--border-radius); font-family: var(--font-family-primary); font-weight: 600; cursor: pointer; margin: 0.5rem;">Parent Dashboard</button>
+                        <button class="btn-export-progress" style="background: var(--secondary-color); color: white; border: none; padding: 1rem 1.5rem; border-radius: var(--border-radius); font-family: var(--font-family-primary); font-weight: 600; cursor: pointer; margin: 0.5rem;">Export Progress</button>
                     </div>
                 </div>
             </section>
 
         </main>
 
-        <!-- Game Container (dynamically loaded) -->
-        <div id="game-container" class="game-container" style="display: none;">
-            <!-- Individual games will be loaded here -->
+        <!-- Game Container -->
+        <div id="game-container" class="game-container">
+            <!-- Games will be loaded here -->
         </div>
 
     </div>
 
-    <!-- Audio Manager -->
-    <div id="audio-container" style="display: none;">
-        <audio id="bgm" loop>
-            <source src="/assets/sounds/background.mp3" type="audio/mpeg">
-        </audio>
-        <audio id="click-sound">
-            <source src="/assets/sounds/click.mp3" type="audio/mpeg">
-        </audio>
-        <audio id="correct-sound">
-            <source src="/assets/sounds/correct.mp3" type="audio/mpeg">
-        </audio>
-        <audio id="wrong-sound">
-            <source src="/assets/sounds/wrong.mp3" type="audio/mpeg">
-        </audio>
-        <audio id="level-up-sound">
-            <source src="/assets/sounds/levelup.mp3" type="audio/mpeg">
-        </audio>
-    </div>
-
-    <!-- Scripts -->
-    <script src="/src/js/audioManager.js"></script>
-    <script src="/src/js/progressManager.js"></script>
-    <script src="/src/js/uiComponents.js"></script>
-    <script src="/src/js/gameLoader.js"></script>
-    <script src="/src/games/BaseGame.js"></script>
-    <script src="/src/games/ColorMatching.js"></script>
-    <script src="/src/js/main.js"></script>
+    <!-- Load scripts safely with proper error handling -->
+    <script>
+        // Prevent extension conflicts
+        window.addEventListener('error', function(e) {
+            if (e.message && e.message.includes('PageTransport')) {
+                e.stopPropagation();
+                e.preventDefault();
+                return true;
+            }
+        });
+        
+        // Script loader with timeout and error handling
+        function loadScript(src, timeout = 10000) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                
+                const timer = setTimeout(() => {
+                    reject(new Error(`Script load timeout: ${src}`));
+                }, timeout);
+                
+                script.onload = () => {
+                    clearTimeout(timer);
+                    console.log(`✅ Loaded: ${src}`);
+                    resolve();
+                };
+                
+                script.onerror = () => {
+                    clearTimeout(timer);
+                    reject(new Error(`Failed to load: ${src}`));
+                };
+                
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Load all scripts
+        async function initializeApp() {
+            const scripts = [
+                '/src/js/audioManager.js',
+                '/src/js/progressManager.js', 
+                '/src/js/uiComponents.js',
+                '/src/js/gameLoader.js',
+                '/src/games/BaseGame.js',
+                '/src/games/ColorMatching.js',
+                '/src/games/NumberLearning.js',
+                '/src/games/LetterLearning.js',
+                '/src/js/main.js'
+            ];
+            
+            try {
+                for (const script of scripts) {
+                    await loadScript(script);
+                    await new Promise(resolve => setTimeout(resolve, 100)); // Small delay between scripts
+                }
+                console.log('🎉 All scripts loaded successfully');
+            } catch (error) {
+                console.error('❌ Script loading failed:', error);
+                
+                // Show user-friendly error
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: #f44336;
+                    color: white;
+                    padding: 20px;
+                    border-radius: 12px;
+                    text-align: center;
+                    z-index: 10000;
+                    font-family: 'Comic Neue', cursive;
+                    max-width: 400px;
+                `;
+                errorDiv.innerHTML = `
+                    <h3>🚫 Loading Error</h3>
+                    <p>Some game files couldn't load. Please refresh the page to try again.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 15px; padding: 10px 20px; background: white; color: #f44336; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">🔄 Refresh Page</button>
+                `;
+                document.body.appendChild(errorDiv);
+                
+                // Hide loading screen
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
+            }
+        }
+        
+        // Start loading when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+    </script>
 </body>
 </html>
