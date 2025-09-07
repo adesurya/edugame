@@ -13,6 +13,11 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
     
+    <!-- Load CSS files -->
+    <link rel="stylesheet" href="/src/styles/main.css">
+    <link rel="stylesheet" href="/src/styles/games.css">
+    <link rel="stylesheet" href="/src/styles/number-letter-games.css">
+    
     <style>
         :root {
             --primary-color: #4CAF50;
@@ -101,6 +106,12 @@
             transition: width 0.3s ease;
         }
         
+        .loading-details {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+        }
+        
         @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(-30px); }
@@ -115,304 +126,44 @@
             transition: opacity 0.5s ease;
         }
         
-        /* Header */
-        .app-header {
-            background: var(--surface-color);
-            box-shadow: var(--shadow-md);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .hidden { display: none !important; }
         
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: var(--spacing-md) var(--spacing-xl);
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-        }
-        
-        .app-logo {
-            font-size: 2rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            padding: var(--spacing-sm);
-            border-radius: var(--border-radius);
-        }
-        
-        .app-title {
-            font-family: var(--font-family-heading);
-            font-size: 1.5rem;
-            color: var(--text-primary);
-            margin: 0;
-        }
-        
-        .main-nav {
-            display: flex;
-            gap: var(--spacing-sm);
-        }
-        
-        .nav-btn {
-            background: transparent;
-            border: 2px solid transparent;
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: 8px;
-            font-family: var(--font-family-primary);
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            color: var(--text-secondary);
-        }
-        
-        .nav-btn:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .nav-btn.active {
-            background: var(--primary-color);
-            color: white;
-        }
-        
-        .user-section {
-            display: flex;
-            align-items: center;
-        }
-        
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            padding: var(--spacing-sm);
-            border-radius: var(--border-radius);
-            background: var(--background-color);
-        }
-        
-        .avatar {
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            background: var(--accent-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .username {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        /* Main Content */
-        .main-content {
-            padding: var(--spacing-xl);
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .screen {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-        
-        .screen.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Game Cards */
-        .games-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-        
-        .games-header h2 {
-            font-family: var(--font-family-heading);
-            font-size: 2.5rem;
-            margin-bottom: var(--spacing-lg);
-        }
-        
-        .age-filter {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-sm);
-        }
-        
-        .filter-btn {
-            background: var(--surface-color);
-            border: 2px solid #E0E0E0;
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--border-radius);
-            font-family: var(--font-family-primary);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-        }
-        
-        .filter-btn:hover {
-            border-color: var(--primary-color);
-        }
-        
-        .filter-btn.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: var(--spacing-lg);
-        }
-        
-        .game-card {
-            background: var(--surface-color);
-            border-radius: var(--border-radius);
-            padding: var(--spacing-lg);
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition-normal);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .game-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .game-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-        }
-        
-        .game-icon {
-            font-size: 2.5rem;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius);
-            color: white;
-        }
-        
-        .game-title {
-            font-family: var(--font-family-heading);
-            font-size: 1.25rem;
-            margin-bottom: var(--spacing-sm);
-            color: var(--text-primary);
-        }
-        
-        .game-description {
-            color: var(--text-secondary);
-            margin-bottom: var(--spacing-md);
-            line-height: 1.5;
-        }
-        
-        .game-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-lg);
-        }
-        
-        .age-badge {
-            background: var(--accent-color);
-            color: white;
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .difficulty-stars {
-            color: var(--warning-color);
-            font-size: 0.875rem;
-        }
-        
-        .estimated-time {
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-        }
-        
-        .btn-play-game {
-            background: linear-gradient(45deg, var(--primary-color), var(--success-color));
-            color: white;
-            border: none;
-            padding: var(--spacing-md) var(--spacing-xl);
-            border-radius: var(--border-radius);
-            font-family: var(--font-family-primary);
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin: 0 auto;
-        }
-        
-        .btn-play-game:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-md);
-        }
-        
-        /* Game Container */
-        .game-container {
+        /* Error Message */
+        .error-message {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            font-family: var(--font-family-primary);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f44336;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            z-index: 10000;
+            font-family: 'Comic Neue', cursive;
+            max-width: 400px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: var(--spacing-md);
-                padding: var(--spacing-md);
-            }
-            
-            .main-nav {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .nav-btn {
-                padding: var(--spacing-xs) var(--spacing-sm);
-                font-size: 0.875rem;
-            }
-            
-            .main-content {
-                padding: var(--spacing-md);
-            }
-            
-            .games-grid {
-                grid-template-columns: 1fr;
-            }
+        .error-message h3 {
+            margin-bottom: 15px;
+            font-family: 'Fredoka One', cursive;
         }
         
-        .hidden {
-            display: none !important;
+        .error-message button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: white;
+            color: #f44336;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Comic Neue', cursive;
+        }
+        
+        .error-message button:hover {
+            background: #f0f0f0;
         }
     </style>
 </head>
@@ -425,6 +176,7 @@
             <div class="loading-bar">
                 <div class="loading-progress" id="loading-progress"></div>
             </div>
+            <div class="loading-details" id="loading-details">Initializing...</div>
         </div>
     </div>
 
@@ -668,102 +420,258 @@
 
     </div>
 
-    <!-- Load scripts safely with proper error handling -->
+    <!-- Script Loading dengan Error Handling yang Lebih Baik -->
     <script>
-        // Prevent extension conflicts
-        window.addEventListener('error', function(e) {
-            if (e.message && e.message.includes('PageTransport')) {
-                e.stopPropagation();
-                e.preventDefault();
-                return true;
-            }
-        });
-        
-        // Script loader with timeout and error handling
-        function loadScript(src, timeout = 10000) {
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = src;
-                
-                const timer = setTimeout(() => {
-                    reject(new Error(`Script load timeout: ${src}`));
-                }, timeout);
-                
-                script.onload = () => {
-                    clearTimeout(timer);
-                    console.log(`✅ Loaded: ${src}`);
-                    resolve();
-                };
-                
-                script.onerror = () => {
-                    clearTimeout(timer);
-                    reject(new Error(`Failed to load: ${src}`));
-                };
-                
-                document.head.appendChild(script);
-            });
-        }
-        
-        // Load all scripts
-        async function initializeApp() {
-            const scripts = [
-                '/src/js/audioManager.js',
-                '/src/js/progressManager.js', 
-                '/src/js/uiComponents.js',
-                '/src/js/gameLoader.js',
-                '/src/games/BaseGame.js',
-                '/src/games/ColorMatching.js',
-                '/src/games/NumberLearning.js',
-                '/src/games/LetterLearning.js',
-                '/src/js/main.js'
-            ];
+        (function() {
+            'use strict';
             
-            try {
-                for (const script of scripts) {
-                    await loadScript(script);
-                    await new Promise(resolve => setTimeout(resolve, 100)); // Small delay between scripts
+            // Global error handler
+            window.addEventListener('error', function(e) {
+                console.error('Global error:', e.error);
+                if (e.message && e.message.includes('PageTransport')) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    return true;
                 }
-                console.log('🎉 All scripts loaded successfully');
-            } catch (error) {
-                console.error('❌ Script loading failed:', error);
+            });
+            
+            // Loading progress tracker
+            let loadingProgress = 0;
+            const progressEl = document.getElementById('loading-progress');
+            const detailsEl = document.getElementById('loading-details');
+            
+            function updateProgress(progress, text) {
+                loadingProgress = Math.min(progress, 100);
+                if (progressEl) progressEl.style.width = `${loadingProgress}%`;
+                if (detailsEl) detailsEl.textContent = text;
+            }
+            
+            // Script loader dengan dependency management
+            function loadScript(src, timeout = 15000) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.async = false; // Maintain order
+                    
+                    const timer = setTimeout(() => {
+                        reject(new Error(`Script load timeout: ${src}`));
+                    }, timeout);
+                    
+                    script.onload = () => {
+                        clearTimeout(timer);
+                        console.log(`✅ Loaded: ${src}`);
+                        resolve();
+                    };
+                    
+                    script.onerror = () => {
+                        clearTimeout(timer);
+                        reject(new Error(`Failed to load: ${src}`));
+                    };
+                    
+                    document.head.appendChild(script);
+                });
+            }
+            
+            // Load scripts dengan dependency order yang benar
+            async function initializeApp() {
+                const scripts = [
+                    { src: '/src/js/audioManager.js', name: 'Audio Manager' },
+                    { src: '/src/js/progressManager.js', name: 'Progress Manager' },
+                    { src: '/src/js/uiComponents.js', name: 'UI Components' },
+                    { src: '/src/js/gameLoader.js', name: 'Game Loader' },
+                    { src: '/src/games/BaseGame.js', name: 'Base Game' },
+                    { src: '/src/games/ColorMatching.js', name: 'Color Matching Game' },
+                    { src: '/src/games/NumberLearning.js', name: 'Number Learning Game' },
+                    { src: '/src/games/LetterLearning.js', name: 'Letter Learning Game' },
+                    { src: '/src/js/main.js', name: 'Main App' }
+                ];
                 
-                // Show user-friendly error
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: #f44336;
-                    color: white;
-                    padding: 20px;
-                    border-radius: 12px;
-                    text-align: center;
-                    z-index: 10000;
-                    font-family: 'Comic Neue', cursive;
-                    max-width: 400px;
-                `;
-                errorDiv.innerHTML = `
-                    <h3>🚫 Loading Error</h3>
-                    <p>Some game files couldn't load. Please refresh the page to try again.</p>
-                    <button onclick="window.location.reload()" style="margin-top: 15px; padding: 10px 20px; background: white; color: #f44336; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">🔄 Refresh Page</button>
-                `;
-                document.body.appendChild(errorDiv);
-                
-                // Hide loading screen
+                try {
+                    updateProgress(10, 'Starting initialization...');
+                    
+                    for (let i = 0; i < scripts.length; i++) {
+                        const script = scripts[i];
+                        const progress = 10 + ((i + 1) / scripts.length) * 80;
+                        
+                        updateProgress(progress, `Loading ${script.name}...`);
+                        await loadScript(script.src);
+                        
+                        // Small delay between scripts
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    
+                    updateProgress(95, 'Finalizing...');
+                    
+                    // Wait untuk main app initialization
+                    let attempts = 0;
+                    while (!window.kidLearnApp && attempts < 30) {
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        attempts++;
+                    }
+                    
+                    updateProgress(100, 'Ready!');
+                    
+                    // Hide loading screen setelah 1 detik
+                    setTimeout(() => {
+                        const loadingScreen = document.getElementById('loading-screen');
+                        const app = document.getElementById('app');
+                        
+                        if (loadingScreen && app) {
+                            loadingScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                loadingScreen.style.display = 'none';
+                                app.style.opacity = '1';
+                            }, 500);
+                        }
+                    }, 1000);
+                    
+                    console.log('🎉 All systems loaded successfully');
+                    
+                } catch (error) {
+                    console.error('❌ Initialization failed:', error);
+                    showError(error);
+                }
+            }
+            
+            function showError(error) {
                 const loadingScreen = document.getElementById('loading-screen');
                 if (loadingScreen) {
                     loadingScreen.style.display = 'none';
                 }
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message';
+                errorDiv.innerHTML = `
+                    <h3>🚫 Loading Error</h3>
+                    <p>${error.message}</p>
+                    <p>Some game files couldn't load. Please check your internet connection and try again.</p>
+                    <button onclick="window.location.reload()">🔄 Refresh Page</button>
+                `;
+                document.body.appendChild(errorDiv);
             }
-        }
-        
-        // Start loading when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeApp);
-        } else {
-            initializeApp();
-        }
+            
+            // Fallback jika sistem gagal load
+            function createFallbackSystem() {
+                console.log('Creating fallback system...');
+                
+                // Basic audio manager fallback
+                window.AudioManager = class {
+                    constructor() {
+                        this.masterVolume = 0.8;
+                        this.soundEffectsEnabled = true;
+                        this.musicEnabled = true;
+                    }
+                    playSound() {}
+                    setMasterVolume() {}
+                    toggleSoundEffects() {}
+                    toggleMusic() {}
+                };
+                
+                // Basic progress manager fallback
+                window.ProgressManager = class {
+                    constructor() {
+                        this.progressData = {};
+                    }
+                    recordGameSession() {}
+                    getProgressSummary() {
+                        return { totalScore: 0, totalSessions: 0, totalAchievements: 0 };
+                    }
+                    getWeeklyStats() {
+                        return { gamesPlayed: 0, totalTime: 0, averageScore: 0 };
+                    }
+                };
+                
+                // Basic UI components fallback
+                window.UIComponents = class {
+                    showNotification(message, type = 'info') {
+                        console.log(`${type.toUpperCase()}: ${message}`);
+                    }
+                    showLoading() {}
+                    hideLoading() {}
+                };
+                
+                // Basic game loader fallback
+                window.GameLoader = class {
+                    constructor() {
+                        this.currentGame = null;
+                    }
+                    async launchGame(gameId) {
+                        alert(`Game ${gameId} would launch here. Fallback mode active.`);
+                    }
+                    exitCurrentGame() {}
+                };
+                
+                // Initialize basic app
+                window.kidLearnApp = {
+                    navigateToScreen: function(screen) {
+                        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                        const targetScreen = document.getElementById(`${screen}-screen`);
+                        if (targetScreen) {
+                            targetScreen.classList.add('active');
+                        }
+                        
+                        document.querySelectorAll('.nav-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                            if (btn.dataset.route === screen) {
+                                btn.classList.add('active');
+                            }
+                        });
+                    }
+                };
+                
+                // Setup basic navigation
+                document.addEventListener('click', (e) => {
+                    if (e.target.matches('.nav-btn')) {
+                        const route = e.target.dataset.route;
+                        if (route && window.kidLearnApp) {
+                            window.kidLearnApp.navigateToScreen(route);
+                        }
+                    }
+                    
+                    if (e.target.matches('.btn-play, .btn-play-game') || e.target.closest('.btn-play, .btn-play-game')) {
+                        const button = e.target.matches('.btn-play, .btn-play-game') ? e.target : e.target.closest('.btn-play, .btn-play-game');
+                        const gameId = button.dataset.game;
+                        if (gameId) {
+                            alert(`Game "${gameId}" would start here. This is fallback mode - please refresh to load full features.`);
+                        }
+                    }
+                });
+                
+                console.log('Fallback system ready');
+            }
+            
+            // Start initialization
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(initializeApp, 500);
+                });
+            } else {
+                setTimeout(initializeApp, 500);
+            }
+            
+            // Fallback timeout
+            setTimeout(() => {
+                if (!window.kidLearnApp) {
+                    console.warn('Main app failed to load, activating fallback...');
+                    updateProgress(100, 'Loading fallback mode...');
+                    createFallbackSystem();
+                    
+                    setTimeout(() => {
+                        const loadingScreen = document.getElementById('loading-screen');
+                        const app = document.getElementById('app');
+                        
+                        if (loadingScreen && app) {
+                            loadingScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                loadingScreen.style.display = 'none';
+                                app.style.opacity = '1';
+                            }, 500);
+                        }
+                    }, 1000);
+                }
+            }, 20000); // 20 second timeout
+            
+        })();
     </script>
 </body>
 </html>
