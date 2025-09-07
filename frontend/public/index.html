@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidLearn Games - Educational Games for Children</title>
+    
+    <!-- Meta tags for SEO and mobile -->
+    <meta name="description" content="Fun and educational games for children aged 3-6. Learn colors, numbers, letters and more!">
+    <meta name="keywords" content="educational games, kids learning, children games, early childhood education">
+    <meta name="author" content="KidLearn Games">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/favicon.ico" type="image/x-icon">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/assets/styles/main.css" as="style">
+    <link rel="preload" href="/assets/sounds/click.mp3" as="audio">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/assets/styles/main.css">
+    <link rel="stylesheet" href="/assets/styles/games.css">
+    <link rel="stylesheet" href="/assets/styles/responsive.css">
+    
+    <!-- Google Fonts for child-friendly typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Socket.io for real-time features -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">🎮</div>
+            <div class="loading-text">Loading KidLearn Games...</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="app-container" style="display: none;">
+        
+        <!-- Navigation Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="app-logo">🎓</div>
+                    <h1 class="app-title">KidLearn Games</h1>
+                </div>
+                
+                <nav class="main-nav">
+                    <button class="nav-btn" data-route="home">🏠 Home</button>
+                    <button class="nav-btn" data-route="games">🎮 Games</button>
+                    <button class="nav-btn" data-route="progress">📊 Progress</button>
+                    <button class="nav-btn" data-route="settings">⚙️ Settings</button>
+                </nav>
+                
+                <div class="user-section">
+                    <div class="user-profile" id="user-profile">
+                        <div class="avatar">👶</div>
+                        <span class="username" id="username">Little Learner</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Home Screen -->
+            <section id="home-screen" class="screen active">
+                <div class="welcome-section">
+                    <h2 class="welcome-title">Welcome Back!</h2>
+                    <p class="welcome-subtitle">Ready to learn and have fun?</p>
+                    
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">🏆</div>
+                            <div class="stat-value" id="total-score">0</div>
+                            <div class="stat-label">Total Score</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🎯</div>
+                            <div class="stat-value" id="games-completed">0</div>
+                            <div class="stat-label">Games Completed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⭐</div>
+                            <div class="stat-value" id="achievements-earned">0</div>
+                            <div class="stat-label">Achievements</div>
+                        </div>
+                    </div>
+                    
+                    <div class="featured-game">
+                        <h3>Featured Game</h3>
+                        <div class="game-preview" id="featured-game-card">
+                            <div class="game-icon">🎨</div>
+                            <div class="game-info">
+                                <h4>Color Matching Fun!</h4>
+                                <p>Learn colors by matching them together!</p>
+                                <div class="game-meta">
+                                    <span class="age-group">Ages 3-4</span>
+                                    <span class="difficulty">⭐ Easy</span>
+                                </div>
+                            </div>
+                            <button class="btn-play" data-game="color-matching">Play Now!</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Games Selection Screen -->
+            <section id="games-screen" class="screen">
+                <div class="games-header">
+                    <h2>Choose Your Game</h2>
+                    <div class="age-filter">
+                        <button class="filter-btn active" data-age="all">All Ages</button>
+                        <button class="filter-btn" data-age="3-4">Ages 3-4</button>
+                        <button class="filter-btn" data-age="5-6">Ages 5-6</button>
+                    </div>
+                </div>
+                
+                <div class="games-grid" id="games-grid">
+                    <!-- Game cards will be dynamically generated -->
+                    <div class="game-card" data-game="color-matching" data-age="3-4">
+                        <div class="game-card-header">
+                            <div class="game-icon">🎨</div>
+                            <div class="game-status">
+                                <div class="completion-badge" style="display: none;">✅</div>
+                                <div class="progress-ring">
+                                    <div class="progress-circle" data-progress="0"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">Color Matching</h3>
+                            <p class="game-description">Match colors and learn their names!</p>
+                            <div class="game-meta">
+                                <span class="age-badge">Ages 3-4</span>
+                                <span class="difficulty-stars">⭐</span>
+                                <span class="estimated-time">⏱️ 5 min</span>
+                            </div>
+                        </div>
+                        <div class="game-actions">
+                            <button class="btn-play-game" data-game="color-matching">
+                                <span class="btn-icon">▶️</span>
+                                <span class="btn-text">Play</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Placeholder for future games -->
+                    <div class="game-card coming-soon">
+                        <div class="game-card-header">
+                            <div class="game-icon">🔢</div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">Number Fun</h3>
+                            <p class="game-description">Learn to count from 1 to 10!</p>
+                            <div class="game-meta">
+                                <span class="age-badge">Ages 3-4</span>
+                                <span class="difficulty-stars">⭐</span>
+                            </div>
+                        </div>
+                        <div class="game-actions">
+                            <button class="btn-coming-soon" disabled>
+                                <span class="btn-text">Coming Soon</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="game-card coming-soon">
+                        <div class="game-card-header">
+                            <div class="game-icon">🔤</div>
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">Letter Learning</h3>
+                            <p class="game-description">Discover the alphabet!</p>
+                            <div class="game-meta">
+                                <span class="age-badge">Ages 4-5</span>
+                                <span class="difficulty-stars">⭐⭐</span>
+                            </div>
+                        </div>
+                        <div class="game-actions">
+                            <button class="btn-coming-soon" disabled>
+                                <span class="btn-text">Coming Soon</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Screen -->
+            <section id="progress-screen" class="screen">
+                <div class="progress-header">
+                    <h2>Learning Progress</h2>
+                    <div class="progress-summary">
+                        <div class="summary-card">
+                            <h3>This Week</h3>
+                            <div class="weekly-stats" id="weekly-stats">
+                                <!-- Progress data will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-content">
+                    <div class="achievements-section">
+                        <h3>🏆 Achievements</h3>
+                        <div class="achievements-grid" id="achievements-grid">
+                            <!-- Achievement badges will be displayed here -->
+                        </div>
+                    </div>
+                    
+                    <div class="games-progress">
+                        <h3>📈 Games Progress</h3>
+                        <div class="progress-list" id="progress-list">
+                            <!-- Individual game progress will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Screen -->
+            <section id="settings-screen" class="screen">
+                <div class="settings-header">
+                    <h2>Settings</h2>
+                </div>
+                
+                <div class="settings-content">
+                    <div class="settings-group">
+                        <h3>Audio Settings</h3>
+                        <div class="setting-item">
+                            <label for="master-volume">Master Volume</label>
+                            <input type="range" id="master-volume" min="0" max="100" value="80">
+                            <span id="volume-value">80%</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="music-enabled">Background Music</label>
+                            <input type="checkbox" id="music-enabled" checked>
+                        </div>
+                        <div class="setting-item">
+                            <label for="sound-effects">Sound Effects</label>
+                            <input type="checkbox" id="sound-effects" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Game Settings</h3>
+                        <div class="setting-item">
+                            <label for="difficulty-auto">Auto Adjust Difficulty</label>
+                            <input type="checkbox" id="difficulty-auto" checked>
+                        </div>
+                        <div class="setting-item">
+                            <label for="animations-enabled">Animations</label>
+                            <input type="checkbox" id="animations-enabled" checked>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Parent Settings</h3>
+                        <button class="btn-parent-dashboard">Parent Dashboard</button>
+                        <button class="btn-export-progress">Export Progress</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Game Container (dynamically loaded) -->
+        <div id="game-container" class="game-container" style="display: none;">
+            <!-- Individual games will be loaded here -->
+        </div>
+
+    </div>
+
+    <!-- Audio Manager -->
+    <div id="audio-container" style="display: none;">
+        <audio id="bgm" loop>
+            <source src="/assets/sounds/background.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="click-sound">
+            <source src="/assets/sounds/click.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="correct-sound">
+            <source src="/assets/sounds/correct.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="wrong-sound">
+            <source src="/assets/sounds/wrong.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="level-up-sound">
+            <source src="/assets/sounds/levelup.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/src/js/audioManager.js"></script>
+    <script src="/src/js/progressManager.js"></script>
+    <script src="/src/js/uiComponents.js"></script>
+    <script src="/src/js/gameLoader.js"></script>
+    <script src="/src/games/BaseGame.js"></script>
+    <script src="/src/games/ColorMatching.js"></script>
+    <script src="/src/js/main.js"></script>
+</body>
+</html>
