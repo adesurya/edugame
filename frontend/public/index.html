@@ -259,7 +259,8 @@
                     <div class="age-filter">
                         <button class="filter-btn active" data-age="all">All Ages</button>
                         <button class="filter-btn" data-age="3-4">Ages 3-4</button>
-                        <button class="filter-btn" data-age="5-6">Ages 5-6</button>
+                        <button class="filter-btn" data-age="3-5">Ages 3-5</button>
+                        <button class="filter-btn" data-age="4-6">Ages 4-6</button>
                     </div>
                 </div>
                 
@@ -295,6 +296,7 @@
                             <div class="game-meta">
                                 <span class="age-badge">Ages 3-5</span>
                                 <span class="difficulty-stars">⭐</span>
+                                <span class="estimated-time">⏱️ 7 min</span>
                             </div>
                         </div>
                         <div class="game-actions">
@@ -315,6 +317,7 @@
                             <div class="game-meta">
                                 <span class="age-badge">Ages 4-6</span>
                                 <span class="difficulty-stars">⭐⭐</span>
+                                <span class="estimated-time">⏱️ 10 min</span>
                             </div>
                         </div>
                         <div class="game-actions">
@@ -420,7 +423,7 @@
 
     </div>
 
-    <!-- Script Loading dengan Error Handling yang Lebih Baik -->
+    <!-- Script Loading dengan Error Handling -->
     <script>
         (function() {
             'use strict';
@@ -472,6 +475,34 @@
                 });
             }
             
+            // Enhanced age filter function
+            window.filterGamesByAge = function(ageGroup) {
+                console.log('Filtering games by age:', ageGroup);
+                
+                document.querySelectorAll('.game-card').forEach(card => {
+                    const cardAge = card.dataset.age;
+                    let shouldShow = false;
+                    
+                    if (ageGroup === 'all') {
+                        shouldShow = true;
+                    } else if (ageGroup === cardAge) {
+                        // Exact match
+                        shouldShow = true;
+                    } else if (ageGroup === '3-4' && (cardAge === '3-4' || cardAge === '3-5')) {
+                        // 3-4 filter shows games for 3-4 and 3-5
+                        shouldShow = true;
+                    } else if (ageGroup === '3-5' && (cardAge === '3-4' || cardAge === '3-5')) {
+                        // 3-5 filter shows games for 3-4 and 3-5
+                        shouldShow = true;
+                    } else if (ageGroup === '4-6' && (cardAge === '4-6' || cardAge === '3-5')) {
+                        // 4-6 filter shows games for 4-6 and some 3-5 overlap
+                        shouldShow = true;
+                    }
+                    
+                    card.style.display = shouldShow ? 'block' : 'none';
+                });
+            };
+            
             // Load scripts dengan dependency order yang benar
             async function initializeApp() {
                 const scripts = [
@@ -520,23 +551,6 @@
                             loadingScreen.style.opacity = '0';
                             setTimeout(() => {
                                 loadingScreen.style.display = 'none';
-                                app.style.opacity = '1';
-                            }, 500);
-                        }
-                    }, 1000);
-                    
-                    console.log('🎉 All systems loaded successfully');
-                    
-                } catch (error) {
-                    console.error('❌ Initialization failed:', error);
-                    showError(error);
-                }
-            }
-            
-            function showError(error) {
-                const loadingScreen = document.getElementById('loading-screen');
-                if (loadingScreen) {
-                    loadingScreen.style.display = 'none';
                 }
                 
                 const errorDiv = document.createElement('div');
@@ -635,6 +649,17 @@
                             alert(`Game "${gameId}" would start here. This is fallback mode - please refresh to load full features.`);
                         }
                     }
+                    
+                    // Age filter handling
+                    if (e.target.matches('.filter-btn')) {
+                        const age = e.target.dataset.age;
+                        if (window.filterGamesByAge) {
+                            window.filterGamesByAge(age);
+                        }
+                        
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                    }
                 });
                 
                 console.log('Fallback system ready');
@@ -674,4 +699,21 @@
         })();
     </script>
 </body>
-</html>
+</html>none';
+                                app.style.opacity = '1';
+                            }, 500);
+                        }
+                    }, 1000);
+                    
+                    console.log('🎉 All systems loaded successfully');
+                    
+                } catch (error) {
+                    console.error('❌ Initialization failed:', error);
+                    showError(error);
+                }
+            }
+            
+            function showError(error) {
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.style.display = '
