@@ -27,25 +27,53 @@ class GameLoader {
         title: 'Shape Fun Adventure!',
         className: 'ShapeMatchingGame',
         available: true
-    }
+      },
+      'animal-sounds': {
+        id: 'animal-sounds',
+        title: 'Animal Sounds Fun!',
+        className: 'AnimalSoundsGame',
+        available: true // PERBAIKAN: Tambahkan available: true
+      },
+      'fruit-matching': {
+        id: 'fruit-matching', 
+        title: 'Fruit Fun!',
+        className: 'FruitMatchingGame',
+        available: true // PERBAIKAN: Tambahkan available: true
+      },
+      'vehicle-adventure': {
+        id: 'vehicle-adventure',
+        title: 'Vehicle Adventure!',
+        className: 'VehicleAdventureGame',
+        available: true // PERBAIKAN: Tambahkan available: true
+      },
+      'pattern-play': {
+        id: 'pattern-play',
+        title: 'Pattern Play!',
+        className: 'PatternPlayGame',
+        available: true // PERBAIKAN: Tambahkan available: true
+      },
+      'size-sorting': {
+        id: 'size-sorting',
+        title: 'Size Sorting!',
+        className: 'SizeSortingGame',
+        available: true // PERBAIKAN: Tambahkan available: true
+      }
     };
     
     this.currentGame = null;
-    this.isLaunching = false; // Prevent concurrent launches
-    this.isExiting = false;   // Prevent concurrent exits
+    this.isLaunching = false;
+    this.isExiting = false;
     this.lastLaunchedGame = null;
     
-    console.log('Game Loader initialized');
+    console.log('Game Loader initialized with games:', Object.keys(this.games));
   }
   
   async launchGame(gameId) {
-    // Prevent concurrent launches or if already launching
     if (this.isLaunching || this.isExiting) {
       console.warn(`Cannot launch ${gameId} - operation in progress`);
       return;
     }
     
-    // Prevent relaunching the same game immediately
     if (this.lastLaunchedGame === gameId && this.currentGame) {
       console.warn(`Game ${gameId} is already running`);
       return;
@@ -65,24 +93,17 @@ class GameLoader {
       this.isLaunching = true;
       console.log(`Launching game: ${gameId}`);
       
-      // Close current game if any (but don't navigate)
       if (this.currentGame) {
         await this.closeCurrentGameSilently();
       }
       
-      // Check if game class exists
       if (!window[gameConfig.className]) {
         throw new Error(`${gameConfig.className} class not loaded`);
       }
       
-      // Prepare game environment
       this.prepareGameEnvironment();
-      
-      // Create game instance
       this.currentGame = new window[gameConfig.className]();
       this.lastLaunchedGame = gameId;
-      
-      // Update URL without triggering hashchange
       this.updateURLSilently(gameId);
       
       console.log(`Game launched successfully: ${gameId}`);
@@ -112,7 +133,6 @@ class GameLoader {
   }
   
   exitCurrentGame() {
-    // Prevent concurrent exits
     if (this.isExiting || this.isLaunching) {
       console.warn('Cannot exit - operation in progress');
       return;
@@ -135,9 +155,7 @@ class GameLoader {
       this.lastLaunchedGame = null;
       this.restoreMainApp();
       
-      // Navigate to games screen without causing loop
       if (window.kidLearnApp && typeof window.kidLearnApp.navigateToScreen === 'function') {
-        // Use setTimeout to break any potential call stack issues
         setTimeout(() => {
           window.kidLearnApp.navigateToScreen('games');
         }, 100);
@@ -159,7 +177,6 @@ class GameLoader {
     if (gameContainer) {
       gameContainer.style.display = 'flex';
       gameContainer.style.flexDirection = 'column';
-      // Clear any previous game content
       gameContainer.innerHTML = '';
     }
   }
@@ -170,7 +187,7 @@ class GameLoader {
     
     if (gameContainer) {
       gameContainer.style.display = 'none';
-      gameContainer.innerHTML = ''; // Clean up
+      gameContainer.innerHTML = '';
     }
     
     if (app) {
@@ -179,16 +196,13 @@ class GameLoader {
   }
   
   updateURLSilently(gameId) {
-    // Update URL without triggering hashchange event
     if (window.history && window.history.replaceState) {
       window.history.replaceState(null, null, `#${gameId}`);
     } else {
-      // Fallback for older browsers - temporarily disable hashchange
       const currentHandler = window.onhashchange;
       window.onhashchange = null;
       window.location.hash = gameId;
       
-      // Restore handler after a delay
       setTimeout(() => {
         window.onhashchange = currentHandler;
       }, 100);

@@ -50,6 +50,46 @@ class KidLearnApp {
         icon: '🔴',
         className: 'ShapeMatchingGame',
         available: true
+      },
+      'animal-sounds': {
+        id: 'animal-sounds',
+        title: 'Animal Sounds Fun!',
+        description: 'Learn what sounds animals make!',
+        icon: '🐮',
+        className: 'AnimalSoundsGame',
+        available: true
+      },
+      'fruit-matching': {
+        id: 'fruit-matching', 
+        title: 'Fruit Fun!',
+        description: 'Match fruits and learn their names!',
+        icon: '🍎',
+        className: 'FruitMatchingGame',
+        available: true
+      },
+      'vehicle-adventure': {
+        id: 'vehicle-adventure',
+        title: 'Vehicle Adventure!', 
+        description: 'Explore different types of vehicles!',
+        icon: '🚗',
+        className: 'VehicleAdventureGame',
+        available: true
+      },
+      'pattern-play': {
+        id: 'pattern-play',
+        title: 'Pattern Play!',
+        description: 'Complete simple patterns with shapes!', 
+        icon: '🔴',
+        className: 'PatternPlayGame',
+        available: true
+      },
+      'size-sorting': {
+        id: 'size-sorting',
+        title: 'Size Sorting!',
+        description: 'Sort objects by size - big and small!',
+        icon: '📏', 
+        className: 'SizeSortingGame',
+        available: true
       }
     };
     
